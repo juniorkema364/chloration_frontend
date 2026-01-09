@@ -12,6 +12,7 @@ const ForagesPage = () => {
     showForageForm,
     loading,
     user,
+    owner , 
     setShowForageForm,
     setSelectedForage,
     setCurrentPage,
@@ -335,7 +336,7 @@ const ForagesPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {forages.map(forage => (
+          {[...forages].map(forage => (
             <div
               key={forage.id}
               className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-600"
@@ -385,7 +386,7 @@ const ForagesPage = () => {
               {/* Créateur */}
               <div className="border-t pt-3 mb-4">
                 <p className="text-xs text-gray-500">
-                  Créé par: <strong>{user?.firstName} {user?.lastName}</strong>
+                  Créé par: <strong>{forage.User?.firstName} {forage.User?.lastName}</strong>
                 </p>
                 <p className="text-xs text-gray-500">
                   {new Date(forage.createdAt).toLocaleDateString('fr-FR')}
@@ -425,6 +426,7 @@ const AnalysesPage = () => {
     showAnalysisForm,
     loading,
     user,
+    owner , 
     setShowAnalysisForm,
     setCurrentPage,
     createAnalysis,
@@ -599,7 +601,7 @@ const AnalysesPage = () => {
         disabled={loading}
         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
       >
-        {options.map(opt => (
+        {[...options].map(opt => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
@@ -677,6 +679,17 @@ const AnalysesPage = () => {
             {currentTab === 'chimique' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField label="pH" name="pH" placeholder="7.0" required errors={formErrors} />
+
+
+
+
+
+
+
+
+
+
+                
                 <InputField label="Salinité (g/L)" name="salinity" placeholder="0.50" />
                 <InputField label="Conductivité (µS/cm)" name="conductivity" placeholder="500" />
                 <InputField label="Nitrates (mg/L)" name="nitrates" placeholder="25" />
@@ -795,7 +808,7 @@ const AnalysesPage = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {analyses.map((analysis, idx) => (
+          {[...analyses].map((analysis, idx) => (
             <div
               key={analysis.id}
               className={`border-l-4 bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition ${
@@ -812,7 +825,7 @@ const AnalysesPage = () => {
                     {new Date(analysis.analysisDate).toLocaleString('fr-FR')}
                   </p>
                   <p className="text-gray-500 text-xs">
-                    Créée par: {user?.firstName} {user?.lastName}
+                    Créée par: {forages.User?.firstName} {forages.User?.lastName}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

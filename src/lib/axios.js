@@ -34,16 +34,18 @@
 // src/api/axiosClient.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
-
+ 
 // Créer l'instance axios
 const axiosClient = axios.create({
-  baseURL: API_URL,
-  withCredentials : true , 
+  // baseURL: import.meta.env.VITE_API_URL,
+  baseURL  : import.meta.env.VITE_API_URL  ,
+  // baseURL: import.meta.mode === "development" ? "http://localhost:5000/api" : "/api",
+  // baseURL : "http://localhost:5000/api" , 
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
-  },
-  timeout: 10000
+  }
+  // timeout: 10000
 }); 
 
 // Intercepteur de requête

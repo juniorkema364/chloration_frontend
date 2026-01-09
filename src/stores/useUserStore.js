@@ -682,6 +682,7 @@ export const useWaterStore = create(
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           set({
+          	owner : null ,
             user: null,
             token: null,
             isAuthenticated: false,
@@ -708,7 +709,9 @@ export const useWaterStore = create(
           set({ loading: true, error: null });
           try {
             const response = await axiosClient.get('/forages');
-            set({ forages: response.data, loading: false });
+            set({ forages: response.data, loading: false  , owner : response.data.User});
+       
+            console.log('response' , response.data.depth)
             return { success: true };
           } catch (error) {
             const errorMsg = error.message || 'Erreur lors du chargement des forages';
@@ -740,7 +743,7 @@ export const useWaterStore = create(
             const errorMsg = error.message || 'Erreur lors de la création du forage';
             set({ error: errorMsg, loading: false });
             console.error('Create forage error:', errorMsg);
-            console.error('Erreur lors de la creation de forages' , error )
+            console.error('Erreur lors de la creation de forages' , error)
             return { success: false, message: errorMsg };
           }
         },
