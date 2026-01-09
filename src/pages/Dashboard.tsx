@@ -1,11 +1,65 @@
-
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.tsx
 import React, { useEffect } from 'react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
 import { Droplet, Activity, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { useWaterStore } from '../stores/useUserStore';
 
-export const Dashboard = () => {
+// ===================== TYPES =====================
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+interface Stats {
+  totalForages: number;
+  potable: number;
+  nonPotable: number;
+  totalAnalyses: number;
+}
+
+interface Analyse {
+  id: number;
+  pH: string | number;
+  turbidity: string | number;
+  // ajoute d'autres champs si nécessaire
+}
+
+interface ChartData {
+  name: string;
+  pH: number;
+  turbidity: number;
+}
+
+interface PieData {
+  name: string;
+  value: number;
+}
+
+interface StatCardProps {
+  title: string;
+  value?: number;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+  color: string;
+}
+
+// ===================== COMPONENT =====================
+export const Dashboard: React.FC = () => {
   const {
     stats,
     analyses,
@@ -24,23 +78,23 @@ export const Dashboard = () => {
     loadData();
   }, [fetchForages, fetchStats]);
 
-  const chartData = analyses
+  const chartData: ChartData[] = analyses
     .slice(0, 10)
     .reverse()
     .map((a, idx) => ({
       name: `Ana. ${idx + 1}`,
-      pH: parseFloat(a.pH),
-      turbidity: parseFloat(a.turbidity)
+      pH: parseFloat(a.pH as string),
+      turbidity: parseFloat(a.turbidity as string)
     }));
 
-  const pieData = stats
+  const pieData: PieData[] = stats
     ? [
         { name: 'Potable', value: stats.potable },
         { name: 'Non potable', value: stats.nonPotable }
       ]
     : [];
 
-  const StatCard = ({ title, value, icon: Icon, color }) => (
+  const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) => (
     <div className={`border-l-4 ${color} bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow`}>
       <p className="text-gray-600 text-sm font-medium">{title}</p>
       <div className="flex items-center justify-between mt-3">
@@ -82,30 +136,10 @@ export const Dashboard = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Forages"
-          value={stats?.totalForages}
-          icon={Droplet}
-          color="border-blue-600"
-        />
-        <StatCard
-          title="Eau Potable"
-          value={stats?.potable}
-          icon={CheckCircle}
-          color="border-green-600"
-        />
-        <StatCard
-          title="Non Potable"
-          value={stats?.nonPotable}
-          icon={AlertCircle}
-          color="border-red-600"
-        />
-        <StatCard
-          title="Total Analyses"
-          value={stats?.totalAnalyses}
-          icon={Activity}
-          color="border-purple-600"
-        />
+        <StatCard title="Total Forages" value={stats?.totalForages} icon={Droplet} color="border-blue-600" />
+        <StatCard title="Eau Potable" value={stats?.potable} icon={CheckCircle} color="border-green-600" />
+        <StatCard title="Non Potable" value={stats?.nonPotable} icon={AlertCircle} color="border-red-600" />
+        <StatCard title="Total Analyses" value={stats?.totalAnalyses} icon={Activity} color="border-purple-600" />
       </div>
 
       {/* Charts */}
@@ -128,22 +162,8 @@ export const Dashboard = () => {
                   }}
                 />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="pH"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="turbidity"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
+                <Line type="monotone" dataKey="pH" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="turbidity" stroke="#ef4444" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           ) : (

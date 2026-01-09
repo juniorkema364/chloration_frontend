@@ -1,19 +1,38 @@
-// src/pages/LoginPage.jsx
-import React, { useState, useEffect } from 'react';
+// src/pages/LoginPage.tsx
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Droplet, Loader, Mail, Lock } from 'lucide-react';
 import { useWaterStore } from '../stores/useUserStore';
 
-export const LoginPage = () => {
+// ===================== TYPES =====================
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+interface RegisterFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+interface RegisterModalProps {
+  onClose: () => void;
+}
+
+// ===================== COMPONENT =====================
+export const LoginPage: React.FC = () => {
   const { login, authLoading, authError, clearAuthError, setCurrentPage } = useWaterStore();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [localError, setLocalError] = useState('');
-  const [showRegister, setShowRegister] = useState(false);
+  const [formData, setFormData] = useState<LoginFormData>({ email: '', password: '' });
+  const [localError, setLocalError] = useState<string>('');
+  const [showRegister, setShowRegister] = useState<boolean>(false);
 
   useEffect(() => {
     clearAuthError();
   }, [clearAuthError]);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLocalError('');
 
@@ -28,7 +47,6 @@ export const LoginPage = () => {
       return;
     }
 
-    // Appel API
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
@@ -39,7 +57,7 @@ export const LoginPage = () => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setLocalError('');
@@ -60,14 +78,12 @@ export const LoginPage = () => {
 
         {/* Content */}
         <div className="p-8 space-y-4">
-          {/* Erreur d'authentification */}
+          {/* Erreurs */}
           {authError && (
             <div className="border-l-4 border-red-600 bg-red-50 p-4 rounded">
               <p className="text-red-700 text-sm font-medium">{authError}</p>
             </div>
           )}
-
-          {/* Erreur locale */}
           {localError && (
             <div className="border-l-4 border-orange-600 bg-orange-50 p-4 rounded">
               <p className="text-orange-700 text-sm font-medium">{localError}</p>
@@ -76,7 +92,6 @@ export const LoginPage = () => {
 
           {/* Formulaire */}
           <form onSubmit={handleLogin} className="space-y-4">
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <div className="relative">
@@ -93,7 +108,6 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            {/* Mot de passe */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
               <div className="relative">
@@ -110,7 +124,6 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            {/* Bouton Connexion */}
             <button
               type="submit"
               disabled={authLoading}
@@ -121,16 +134,6 @@ export const LoginPage = () => {
             </button>
           </form>
 
-          {/* Séparateur */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">ou</span>
-            </div>
-          </div>
-
           {/* Bouton Inscription */}
           <button
             type="button"
@@ -140,40 +143,34 @@ export const LoginPage = () => {
             Créer un compte
           </button>
         </div>
-
-        {/* Footer */}
-         
       </div>
 
       {/* Modal d'inscription */}
-      {showRegister && (
-        <RegisterModal onClose={() => setShowRegister(false)} />
-      )}
+      {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
     </div>
   );
 };
 
-// Register Modal Component
-const RegisterModal = ({ onClose }) => {
+// ===================== REGISTER MODAL =====================
+const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const { register, authLoading, authError, clearAuthError, setCurrentPage } = useWaterStore();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [localError, setLocalError] = useState('');
+  const [localError, setLocalError] = useState<string>('');
 
   useEffect(() => {
     clearAuthError();
   }, [clearAuthError]);
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLocalError('');
 
-    // Validation
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
       setLocalError('Veuillez remplir tous les champs');
       return;
@@ -194,7 +191,6 @@ const RegisterModal = ({ onClose }) => {
       return;
     }
 
-    // Appel API
     const result = await register(
       formData.firstName,
       formData.lastName,
@@ -211,7 +207,7 @@ const RegisterModal = ({ onClose }) => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setLocalError('');
@@ -229,20 +225,17 @@ const RegisterModal = ({ onClose }) => {
 
         {/* Content */}
         <div className="p-8 space-y-4 max-h-96 overflow-y-auto">
-          {/* Erreurs */}
           {authError && (
             <div className="border-l-4 border-red-600 bg-red-50 p-4 rounded">
               <p className="text-red-700 text-sm font-medium">{authError}</p>
             </div>
           )}
-
           {localError && (
             <div className="border-l-4 border-orange-600 bg-orange-50 p-4 rounded">
               <p className="text-orange-700 text-sm font-medium">{localError}</p>
             </div>
           )}
 
-          {/* Formulaire */}
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
