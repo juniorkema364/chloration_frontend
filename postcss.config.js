@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
-    plugins: {
-        '@tailwindcss/postcss': {},
-        autoprefixer: {},
-    },
-};
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+}
